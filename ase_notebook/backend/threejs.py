@@ -48,8 +48,21 @@ class RenderContainer(object):
     def __setattr__(self, name, value):
         """Set attribute."""
         if name == "top_level":
-            if not hasattr(value, "_ipython_display_"):
-                raise ValueError("top_level must have an `_ipython_display_` method")
+            # Accept classic IPython display protocol, modern mimebundle, or ipywidgets.Widget
+            has_display = hasattr(value, "_ipython_display_") or hasattr(
+                value, "_repr_mimebundle_"
+            )
+            if not has_display:
+                try:
+                    import ipywidgets as ipyw  # type: ignore
+
+                    has_display = isinstance(value, ipyw.Widget)
+                except Exception:
+                    has_display = False
+            if not has_display:
+                raise ValueError(
+                    "top_level must be displayable in IPython (widget or repr_mimebundle)"
+                )
             self._kwargs["top_level"] = value
             return
         if name != "_kwargs":

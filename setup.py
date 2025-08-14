@@ -26,22 +26,27 @@ setup(
     install_requires=[
         # core
         "ase>=3.18,<4",
-        "attrs>=19,<20",
-        "importlib_resources>=1,<2",
-        "numpy>=1.16.4,<1.19",
+        # attrs 19+ for older envs; allow modern attrs for Py>=3.10
+        "attrs>=19",
+        # Only needed for Python <3.9 (backport of importlib.resources)
+        'importlib_resources>=5; python_version < "3.9"',
+        # NumPy >=1.21 supports Python 3.10+
+        "numpy>=1.21",
         # used for color-map
         # TODO use color-map package, with no matplotlib dependency?
-        "matplotlib>=3.1,<4",
+        "matplotlib>=3.5,<4",
         # svg
         "svgwrite>=1.3,<2",
     ],
     extras_require={
-        "threejs": ["pythreejs>=2.1,<3", "ipywidgets>=7.5,<8"],
+        # Allow ipywidgets 8, which supports modern Jupyter
+        "threejs": ["pythreejs>=2.1,<3", "ipywidgets>=7.5,<9"],
         "svgconcat": ["svgutils>=0.3,<0.4"],
         "svg2pdf": ["svglib>=0.9,<1", "reportlab>=3.5,<4"],
         "testing": [
             "coverage",
-            "pytest>=3.6,<4",
+            # Allow modern pytest versions
+            "pytest>=3.6",
             "pytest-cov",
             # "pytest-regressions",
         ],
